@@ -52,7 +52,7 @@ const { gamma } = require('@toshiara/special-gamma');
 import { gamma } from '@toshiara/special-gamma';
 ```
 
-### gammaln(x)
+### gamma(x)
 
 Evaluates the gamma function.
 

@@ -1,6 +1,6 @@
 {
     "name": "@toshiara/special-gamma",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "gamma function library (commonjs/esm)",
     "author": "Toshiaki Ara",
     "license": "Apache-2.0",
