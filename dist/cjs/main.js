@@ -34,6 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.gamma = void 0;
 // ## NOTE
 // rewritten in Typescript
+const helper_functions_1 = require("@toshiara/helper-functions");
 const sinpi_1 = require("@toshiara/sinpi");
 // CONSTANTS
 const PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679; // eslint-disable-line max-len
@@ -99,11 +100,11 @@ const EULER = 0.577215664901532860606512090082402431042;
 */
 function gamma(x) {
     let sign;
-    if ((isInteger(x) && x < 0) || x === NINF || isNaN(x)) {
+    if (((0, helper_functions_1.isInteger)(x) && x < 0) || x === NINF || isNaN(x)) {
         return NaN;
     }
     if (x === 0.0) {
-        return isNegativeZero(x) ? NINF : PINF;
+        return (0, helper_functions_1.isNegativeZero)(x) ? NINF : PINF;
     }
     if (x > 171.61447887182298) {
         return PINF;
@@ -155,12 +156,6 @@ function gamma(x) {
 }
 exports.gamma = gamma;
 // functions
-function isInteger(x) {
-    return (Math.floor(x) === x);
-}
-function isNegativeZero(x) {
-    return (x === 0.0 && 1.0 / x === NINF);
-}
 function rateval(x) {
     let ax;
     let s1;
@@ -170,13 +165,47 @@ function rateval(x) {
     }
     ax = (x < 0.0) ? -x : x;
     if (ax <= 1.0) {
-        s1 = 1.0 + (x * (0.4942148268014971 + (x * (0.20744822764843598 + (x * (0.04763678004571372 + (x * (0.010421379756176158 + (x * (0.0011913514700658638 + (x * (0.00016011952247675185 + (x * 0.0))))))))))))); // eslint-disable-line max-len
-        s2 = 1.0 + (x * (0.0714304917030273 + (x * (-0.23459179571824335 + (x * (0.035823639860549865 + (x * (0.011813978522206043 + (x * (-0.004456419138517973 + (x * (0.0005396055804933034 + (x * -0.000023158187332412014))))))))))))); // eslint-disable-line max-len
+        s1 = (0, helper_functions_1.polyval)(x, [
+            1.0,
+            0.4942148268014971,
+            0.20744822764843598,
+            0.04763678004571372,
+            0.010421379756176158,
+            0.0011913514700658638,
+            0.00016011952247675185
+        ]);
+        s2 = (0, helper_functions_1.polyval)(x, [
+            1.0,
+            0.0714304917030273,
+            -0.23459179571824335,
+            0.035823639860549865,
+            0.011813978522206043,
+            -0.004456419138517973,
+            0.0005396055804933034,
+            -0.000023158187332412014
+        ]);
     }
     else {
         x = 1.0 / x;
-        s1 = 0.0 + (x * (0.00016011952247675185 + (x * (0.0011913514700658638 + (x * (0.010421379756176158 + (x * (0.04763678004571372 + (x * (0.20744822764843598 + (x * (0.4942148268014971 + (x * 1.0))))))))))))); // eslint-disable-line max-len
-        s2 = -0.000023158187332412014 + (x * (0.0005396055804933034 + (x * (-0.004456419138517973 + (x * (0.011813978522206043 + (x * (0.035823639860549865 + (x * (-0.23459179571824335 + (x * (0.0714304917030273 + (x * 1.0))))))))))))); // eslint-disable-line max-len
+        s1 = x * (0, helper_functions_1.polyval)(x, [
+            0.00016011952247675185,
+            0.0011913514700658638,
+            0.010421379756176158,
+            0.04763678004571372,
+            0.20744822764843598,
+            0.4942148268014971,
+            1.0
+        ]);
+        s2 = (0, helper_functions_1.polyval)(x, [
+            -0.000023158187332412014,
+            0.0005396055804933034,
+            -0.004456419138517973,
+            0.011813978522206043,
+            0.035823639860549865,
+            -0.23459179571824335,
+            0.0714304917030273,
+            1.0
+        ]);
     }
     return s1 / s2;
 }
@@ -186,7 +215,14 @@ function stirlingApprox(x) {
     let y;
     let v;
     w = 1.0 / x;
-    w = polyval(w);
+    w = (0, helper_functions_1.polyval)(w, [
+        1.0,
+        0.08333333333334822,
+        0.0034722222160545866,
+        -0.0026813261780578124,
+        -0.00022954996161337813,
+        0.0007873113957930937
+    ]);
     y = Math.exp(x);
     // Check `x` to avoid `pow()` overflow...
     if (x > MAX_STIRLING) {
@@ -197,12 +233,6 @@ function stirlingApprox(x) {
         y = Math.pow(x, x - 0.5) / y;
     }
     return SQRT_TWO_PI * y * w;
-}
-function polyval(x) {
-    if (x === 0.0) {
-        return 1.0;
-    }
-    return 1.0 + (x * (0.08333333333334822 + (x * (0.0034722222160545866 + (x * (-0.0026813261780578124 + (x * (-0.00022954996161337813 + (x * 0.0007873113957930937))))))))); // eslint-disable-line max-len
 }
 // small approximation
 function smallApprox(x, z) {
